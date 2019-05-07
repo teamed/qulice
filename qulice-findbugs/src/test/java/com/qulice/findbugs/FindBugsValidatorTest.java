@@ -32,6 +32,8 @@ package com.qulice.findbugs;
 import com.google.common.base.Joiner;
 import com.qulice.spi.Environment;
 import com.qulice.spi.ValidationException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -165,4 +167,15 @@ public final class FindBugsValidatorTest {
         new FindBugsValidator().validate(env);
     }
 
+    /**
+     * Tests that name is not empty.
+     */
+    @Test
+    public void testName() {
+        MatcherAssert.assertThat(
+            "Name is empty",
+            new FindBugsValidator().name().isEmpty(),
+            new IsEqual<>(false)
+        );
+    }
 }

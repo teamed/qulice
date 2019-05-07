@@ -37,14 +37,11 @@ import com.qulice.spi.Environment;
 import com.qulice.spi.ValidationException;
 import com.qulice.spi.Validator;
 import edu.umd.cs.findbugs.FindBugs2;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import edu.umd.cs.findbugs.formatStringChecker.FormatterNumberFormatException;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -52,15 +49,10 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.meta.When;
 import org.apache.bcel.classfile.ClassFormatException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
 import org.jaxen.JaxenException;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.tree.ClassNode;
@@ -109,10 +101,14 @@ public final class FindBugsValidator implements Validator {
         args.add(
             StringUtils.join(env.classpath(), ",").replace("\\", "/")
         );
-        final Iterable<String> excludes = env.excludes("findbugs");
         args.add(this.jar(FBContrib.class).toString());
-        if (excludes.iterator().hasNext()) {
-            args.add(FindBugsValidator.excludes(env, excludes));
+        try {
+            args.addAll(new FindBugsExcludes(env).asArguments());
+        } catch (final IOException exc) {
+            throw new IllegalStateException(
+                "can't generate exclude rules for findbugs",
+                exc
+            );
         }
         return new VerboseProcess(
             new ProcessBuilder(args), Level.INFO, Level.INFO
@@ -147,64 +143,6 @@ public final class FindBugsValidator implements Validator {
             ).replace("\\", "/")
         );
         return opts;
-    }
-
-    /**
-     * Creates file with findbug excludes.
-     * @param env Environment
-     * @param excludes Iterable with exclude patterns
-     * @return Path to file with findbug excludes
-     */
-    private static String excludes(final Environment env,
-        final Iterable<String> excludes) {
-        final String path = StringUtils.join(
-            env.tempdir().getPath(),
-            System.getProperty("path.separator"),
-            "findbug_excludes_",
-            String.valueOf(System.nanoTime()),
-            ".xml"
-        );
-        try {
-            FileUtils.writeStringToFile(
-                new File(path),
-                FindBugsValidator.generateExcludes(excludes),
-                StandardCharsets.UTF_8
-            );
-        } catch (final IOException exc) {
-            throw new IllegalStateException(
-                "can't generate exclude rules for findbugs",
-                exc
-            );
-        }
-        return path;
-    }
-
-    /**
-     * Creates xml with exclude patterns in findbugs native format.
-     * @param excludes Exclude patterns
-     * @return XML with findbugs excludes
-     */
-    @SuppressFBWarnings(
-        value = "XFB_XML_FACTORY_BYPASS",
-        justification = "No other way to create dom4j XMLWriter"
-    )
-    private static String generateExcludes(final Iterable<String> excludes) {
-        final Document document = DocumentHelper.createDocument();
-        final Element root = document
-            .addElement("FindBugsFilter")
-            .addElement("Match")
-            .addElement("Or");
-        for (final String exclude : excludes) {
-            if (exclude != null) {
-                root.addElement("Class").addAttribute("name", exclude);
-            }
-        }
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            new XMLWriter(out).write(document);
-            return new String(out.toByteArray(), StandardCharsets.UTF_8);
-        } catch (final IOException ex) {
-            throw new IllegalStateException(ex);
-        }
     }
 
     /**
@@ -261,5 +199,4 @@ public final class FindBugsValidator implements Validator {
             );
         }
     }
-
 }

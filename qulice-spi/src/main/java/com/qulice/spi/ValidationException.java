@@ -52,6 +52,15 @@ public final class ValidationException extends Exception {
 
     /**
      * Public ctor.
+     * @param message The text of the exception
+     * @param cause The cause of exception
+     */
+    public ValidationException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Public ctor.
      * @param cause The cause of exception
      */
     public ValidationException(final Throwable cause) {
