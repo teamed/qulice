@@ -73,6 +73,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
     -->
   <module name="RegexpSingleline">
     <property name="format" value="\s+$"/>
+    <property name="fileExtensions" value="java"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <!--
@@ -80,6 +81,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
     -->
   <module name="RegexpSingleline">
     <property name="format" value="/\*.*\*/"/>
+    <property name="fileExtensions" value="java"/>
     <property name="message" value="This kind of comment is not allowed."/>
   </module>
   <!--
