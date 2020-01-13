@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019, Qulice.com
+ * Copyright (c) 2011-2020, Qulice.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,9 @@
 package com.qulice.maven;
 
 import com.qulice.spi.ValidationException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Properties;
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Validate with maven-duplicate-finder-plugin.
@@ -65,13 +63,7 @@ public final class DuplicateFinderValidator implements MavenValidator {
             final Properties props = new Properties();
             props.put("failBuildInCaseOfConflict", "true");
             props.put("checkTestClasspath", "false");
-            props.put(
-                "ignoredResources",
-                CollectionUtils.union(
-                    env.excludes("duplicatefinder"),
-                    Arrays.asList("META-INF/.*", "module-info.class")
-                )
-            );
+            props.put("useResultFile", "false");
             final Collection<Properties> deps = new LinkedList<>();
             //  for (String sdep : env.excludes("duplicatefinder")) {
             //      if (StringUtils.countMatches(sdep, ":") == 2) {
@@ -87,7 +79,7 @@ public final class DuplicateFinderValidator implements MavenValidator {
             //  }
             props.put("ignoredDependencies", deps);
             env.executor().execute(
-                "com.ning.maven.plugins:maven-duplicate-finder-plugin:1.0.7",
+                "org.basepom.maven:duplicate-finder-maven-plugin:1.4.0",
                 "check",
                 props
             );
