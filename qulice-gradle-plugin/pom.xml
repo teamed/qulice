@@ -44,7 +44,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
   <repositories>
     <repository>
       <id>Spring Source Libs</id>
-      <url>http://repo.springsource.org/libs-release-remote/</url>
+      <url>https://repo.springsource.org/libs-release-remote/</url>
     </repository>
   </repositories>
   <dependencies>
