@@ -47,7 +47,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>1.2.6</version>
+      <version>3.2.2</version>
     </dependency>
   </dependencies>
 </project>
