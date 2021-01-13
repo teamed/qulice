@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (c) 2011-2019, Qulice.com
+Copyright (c) 2011-2021, Qulice.com
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
   <repositories>
     <repository>
       <id>Spring Source Libs</id>
-      <url>http://repo.springsource.org/libs-release-remote/</url>
+      <url>https://repo.springsource.org/libs-release-remote/</url>
     </repository>
   </repositories>
   <dependencies>
